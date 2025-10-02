@@ -125,73 +125,122 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Lista de Tarefas'), centerTitle: true),
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    controller: _taskController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nova Tarefa',
-                      border: OutlineInputBorder(),
-                    ),
-                    onSubmitted: (value) {
-                      if (value.isNotEmpty) {
-                        _addTodo(value);
-                      }
-                    },
+  // Define o esquema de cores para um design mais limpo
+  final Color primaryColor = Colors.deepPurple;
+  final Color accentColor = Colors.deepPurpleAccent.shade100;
+
+  return Scaffold(
+    // Estiliza a AppBar com o degradê
+    appBar: AppBar(
+      title: const Text('Minhas Tarefas ✨', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+      centerTitle: true,
+      backgroundColor: primaryColor,
+      elevation: 0, // Remove a sombra
+    ),
+    
+    // Adiciona um fundo mais suave
+    backgroundColor: accentColor,
+
+    body: Column(
+      children: <Widget>[
+        // Área de Input (A mesma lógica, mas com um padding maior)
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 8.0),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: TextField(
+                  controller: _taskController,
+                  decoration: InputDecoration(
+                    labelText: 'Nova Tarefa',
+                    hintText: 'Ex: Estudar Flutter e Dart',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
-                ),
-                const SizedBox(width: 8.0),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_taskController.text.isNotEmpty) {
-                      _addTodo(_taskController.text);
+                  onSubmitted: (value) {
+                    if (value.isNotEmpty) {
+                      _addTodo(value);
                     }
                   },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(15),
-                  ),
-                  child: const Text('Adicionar'),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 12.0),
+              // Botão com formato mais moderno
+              ElevatedButton(
+                onPressed: () {
+                  if (_taskController.text.isNotEmpty) {
+                    _addTodo(_taskController.text);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  elevation: 5,
+                ),
+                child: const Text('Add'),
+              ),
+            ],
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: todos.length,
-              itemBuilder: (context, index) {
-                final todo = todos[index];
-                return ListTile(
-                  title: Text(
-                    todo.title,
-                    style: TextStyle(
-                      decoration: todo.isDone
-                          ? TextDecoration.lineThrough
-                          : null,
-                    ),
+        ),
+        
+        // Lista de Tarefas (Usando o Card para um visual mais atraente)
+        Expanded(
+          child: todos.isEmpty
+              ? Center(
+                  child: Text(
+                    '🎉 Lista vazia! Adicione uma tarefa.',
+                    style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
                   ),
-                  leading: Checkbox(
-                    value: todo.isDone,
-                    onChanged: (bool? value) {
-                      _toggleTodo(todo);
-                    },
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _removeTodo(index),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
+                  itemCount: todos.length,
+                  itemBuilder: (context, index) {
+                    final todo = todos[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+                      elevation: 4, // Adiciona uma sombra agradável
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+                        
+                        // Checkbox customizado
+                        leading: Transform.scale(
+                          scale: 1.2,
+                          child: Checkbox(
+                            value: todo.isDone,
+                            onChanged: (bool? value) => _toggleTodo(todo),
+                            activeColor: primaryColor,
+                            shape: const CircleBorder(),
+                          ),
+                        ),
+                        
+                        // Título da Tarefa
+                        title: Text(
+                          todo.title,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: todo.isDone ? FontWeight.w500 : FontWeight.bold,
+                            color: todo.isDone ? Colors.grey.shade600 : Colors.black87,
+                            decoration: todo.isDone ? TextDecoration.lineThrough : null,
+                          ),
+                        ),
+                        
+                        // Ícone de Excluir
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete_outline, color: Colors.red.shade400),
+                          onPressed: () => _removeTodo(index),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+        ),
+      ],
+    ),
+  );
+}
 }
