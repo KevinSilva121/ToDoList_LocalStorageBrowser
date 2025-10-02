@@ -126,7 +126,10 @@ class _TodoListScreenState extends State<TodoListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Lista de Tarefas'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Lista de Tarefas121'),
+        centerTitle: true,
+      ),
       body: Column(
         children: <Widget>[
           Padding(
